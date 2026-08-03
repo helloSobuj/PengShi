@@ -175,7 +175,7 @@ ALL user-facing text, including:
 - Error messages from API routes
 
 ### Agent prompt updates
-Add a `# Language` block in [assistant.py](file:///workspace/agent/src/assistant.py#L23-L58) DEFAULT_INSTRUCTIONS:
+Add a `# Language` block in [assistant.py](file:///workspace/echo-intern-portfolio/agent/src/assistant.py#L23-L58) DEFAULT_INSTRUCTIONS:
 
 ```
 # Language
