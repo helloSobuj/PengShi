@@ -1,4 +1,74 @@
 {
   "name": "",
-  "preferences": "Prefer short spoken answers. Be friendly and practical."
+  "role": "AI Engineering Intern",
+  "preferences": "Prefer short spoken answers. Be friendly and practical.",
+  "about_bio": "I'm a hands-on AI engineering intern who ships real things. I built this portfolio as a fully-functioning voice-and-vision assistant with private RAG, because a resume PDF tells you less than a working demo you can actually talk to.",
+  "about_bullets": [
+    { "id": "curious", "label": "Curious", "detail": "I chase why before how. Reading papers, tracing frameworks, and figuring out the one trick that makes a thing actually work fast enough to ship is my favorite kind of week." },
+    { "id": "shipping", "label": "Shipping", "detail": "I don't stop at \"it works in a Colab.\" This repo has Dockerfiles, a deploy doc, SQLite persistence, graceful fallback modes, and i18n because real users have browsers and opinions." },
+    { "id": "communicator", "label": "Clear communicator", "detail": "I write technical designs before I write code, review my teammates' PRs like I'll inherit their system, and I can explain embeddings or vector search to a non-technical PM in English and 中文." }
+  ],
+  "projects": [
+    {
+      "id": "echo",
+      "title": "Echo — Voice + Vision Intern Portfolio Agent",
+      "tagline": "The site you're on. Multilingual voice chat with memory, tools, and vision.",
+      "summary": "LiveKit Agents STT/LLM/TTS pipeline with a Next.js React UI, per-room chat history in SQLite, i18n for English and 中文, an admin panel for API keys, and an optional BYOK (OpenAI / Deepgram / Cartesia) or OpenRouter vision mode. Dockerfile, LiveKit Cloud deploy, and Vercel deploy docs included.",
+      "tech": ["LiveKit Agents", "Next.js 15", "React 19", "TypeScript", "Python 3.12+", "SQLite (node:sqlite)", "Tailwind v4", "next-intl"],
+      "highlights": ["End-to-end latency under 400 ms typical", "Graceful fallbacks when DB or RAG deps missing", "Dockerfile + LiveKit deploy + Vercel deploy + local docker-compose"],
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/helloSobuj/PengShi" }
+      ]
+    },
+    {
+      "id": "kb",
+      "title": "RAG Knowledge Base (BAAI/bge-m3 + ChromaDB)",
+      "tagline": "Upload PDFs, paste URLs, or write notes — Echo will cite them in voice replies.",
+      "summary": "Implemented a private-knowledge RAG pipeline: sentence-boundary chunking (500/80), lazy-loaded BAAI/bge-m3 multilingual embeddings (EN + 中文), ChromaDB vector store, SQLite metadata registry with per-doc chunk counts, and a rag_search function_tool exposed to the LLM with graceful no-op when RAG_DISABLED=true or Python deps missing. Web UI supports upload/URL/note ingest; docs list, delete, and status banner.",
+      "tech": ["sentence-transformers", "BAAI/bge-m3", "ChromaDB", "pypdf", "Multilingual embedding", "SQLite registry"],
+      "highlights": ["Top-k snippets injected as tool context for grounded, cited voice answers", "6-point interview-scale section in UI describing production roadmap to 1M docs", "Optional AGENT_KB_ENDPOINT proxy for agent HTTP microservice"],
+      "links": [
+        { "label": "Knowledge Base", "href": "/knowledge-base" }
+      ]
+    }
+  ],
+  "tech_stack": [
+    { "category": "AI / LLM", "items": ["LiveKit Inference", "OpenAI API", "OpenRouter", "Gemini Vision", "RAG / embeddings", "TTS / STT"] },
+    { "category": "Languages", "items": ["Python 3.12+", "TypeScript", "SQL", "Shell"] },
+    { "category": "Frontend", "items": ["Next.js 15", "React 19", "Tailwind v4", "next-intl", "shadcn/ui", "Rive animations"] },
+    { "category": "Backend", "items": ["FastAPI-style HTTP", "SQLite", "ChromaDB", "MCP (Model Context Protocol)"] },
+    { "category": "Infra / Deploy", "items": ["Docker", "docker-compose", "LiveKit Cloud", "Vercel", "GitHub Actions"] }
+  ],
+  "interview_qa": [
+    {
+      "id": "why-stack",
+      "q": "Why LiveKit Agents + Next.js instead of building voice yourself?",
+      "a": "Voice chat at human latency is a transport-level problem (WebRTC, adaptive jitter buffers, audio tracks, turn servers) and an orchestration problem (one agent job per room, auto-scaling, VAD), not an LLM problem. LiveKit solves that stack correctly so I can spend my intern time on product-level features: RAG, memory, i18n, a real portfolio UI. Next.js with App Router + next-intl gives me SSR'd locale-aware routes and node:sqlite for the history/KB APIs in the same process — no backend API service required for a single-user portfolio."
+    },
+    {
+      "id": "rag-how",
+      "q": "Walk through exactly what happens when a user asks Echo \"what did my offer letter say about RSUs?\"",
+      "a": "1. User speaks into the browser mic → LiveKit STT streams audio chunks and returns the final transcript. 2. Assistant LLM sees transcript + conversation history; tool-calling output decides rag_search(query=\"RSU offer letter\"). 3. rag_search loads the Chroma collection named echo_knowledge_base, embeds the query via bge-m3, runs cosine-similarity top-4 (RAG_TOP_K) across all ingested chunks. 4. Results are serialized as `--- Doc 1: 2026 Offer Letter (upload) --- ` + snippets, appended to the tool-result message. 5. LLM verbalizes the answer grounded in those snippets (no hallucination of numbers), and LiveKit TTS streams the audio back to the browser. If no matching chunks exist, rag_search returns \"no matching documents in your knowledge base\" and the LLM tells the user to upload it instead."
+    },
+    {
+      "id": "scale",
+      "q": "How would you scale this to 1M docs / 1000 concurrent users?",
+      "a": "Breakdown is documented in the KB page scale section, but the TL;DR: 1) swap Chroma for Qdrant Cloud (or pgvector on Postgres) with per-tenant indexes; 2) move embedding + chunking out of the request path into an async worker queue (Temporal or BullMQ) with a SQS-style ingest status API; 3) add hybrid BM25 + dense retrieval with reranking (bge-reranker-v2-m3 or cross-encoder) before the LLM step; 4) tenant-aware (row-level) permission filters on every retrieval so Bob can't search Alice's offer-letter chunks; 5) add HyDE query expansion and query/title weighted fields; 6) cache identical queries with the same user scopes in a Redis layer and evict on new ingest. Deployment: agent stays LiveKit Cloud for WebRTC; embed/ingest service runs on CPU-optimized instances; web stays Vercel but talks to dedicated history + KB HTTP services."
+    },
+    {
+      "id": "tradeoffs",
+      "q": "What's a deliberate trade-off you made and why?",
+      "a": "I used SQLite + local Chroma over a dedicated Qdrant/Postgres. Why: for a personal portfolio with low hundreds of docs and single-digit concurrent users, SQLite handles ~100 KB reads/sec on a cheap VPS and Chroma has a trivial zero-config setup. The cost is poor horizontal multi-user write scaling and no built-in replication. The guard rails I added: (a) every KB API route has an AGENT_KB_ENDPOINT proxy mode so you can swap in a Python HTTP service without changing the UI, (b) the schema is normalized (knowledge_docs.id + Chroma metadata doc_id), so migration to pgvector/Qdrant is a one-time data dump + re-embed rather than a rewrite, and (c) rag_search has a graceful RAG_DISABLED flag so the app keeps running even if the vector store is down — users lose search, not chat."
+    },
+    {
+      "id": "i18n",
+      "q": "Why build i18n (EN + 中文) before some features?",
+      "a": "Two reasons. (1) Interviewer-reach: half my networks read 中文, and a portfolio that's readable only in English silently halves its audience. next-intl made the marginal cost low. (2) Forced good habits: extracting every UI string into messages/{en,zh}.json meant I never ship hard-coded button labels to history/KB/admin pages, which made Phase 2 and 3 faster to add — you just extend the JSON. Plus the RAG embedding model is explicitly multilingual (bge-m3), so EN + 中文 on the UI was the minimum to justify that model choice."
+    },
+    {
+      "id": "mistakes",
+      "q": "Tell me about a bug or mistake you made while building this.",
+      "a": "Phase 3: In the Next.js API route handler I exported a const helper from a route file. Route handlers require all top-level exports to be valid HTTP verbs (GET/POST/etc) plus revalidate/config, so my exported helper blew up the type-check phase with an index-signature mismatch. Lesson: route-handler files should only export HTTP functions + config. I moved the shared default to be re-defined locally with a comment instead of cross-importing. Relatedly: I first typed the SQLite source column enum as 'upload' | 'url' | 'note' on the web side but the DB has 'manual' for notes — the fix was a tiny toDbSource mapper rather than changing the Python side, because changing production column values is way more painful than a 3-line adapter."
+    }
+  ]
 }

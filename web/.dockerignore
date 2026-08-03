@@ -1,0 +1,39 @@
+# Node / Next.js artifacts
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# Package manager caches
+.pnpm-store/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+.secrets.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Editor / agent scratch
+.cursor/
+.windsurf/
+.cline/
+.aider*
+.gemini/
+.codex/
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.github/
+
+# Docs and misc
+README.md
+TEMPLATE.md
+LICENSE

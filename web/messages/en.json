@@ -154,5 +154,32 @@
     "errorIngest": "Ingestion failed",
     "errorDelete": "Delete failed",
     "deleteConfirm": "Delete this document?"
+  },
+  "portfolio": {
+    "navAbout": "About",
+    "navProjects": "Projects",
+    "navTech": "Tech Stack",
+    "navInterview": "Interview Q&A",
+    "navHistory": "Chat History",
+    "navKB": "Knowledge Base",
+    "navAdmin": "Admin",
+    "heroGreeting": "Hi, I'm an AI engineering intern — this is my portfolio, and Echo on the right can answer questions about it out loud.",
+    "heroCta": "Click the microphone button and ask, \"Tell me about your RAG knowledge base\" or \"How would you scale this?\"",
+    "aboutTitle": "About Me",
+    "aboutSubtitle": "Less bullet-point resume, more a working demo you can talk to.",
+    "projectsTitle": "Projects",
+    "projectsSubtitle": "Every card is a thing I shipped, not a tutorial toy.",
+    "techTitle": "Tech Stack",
+    "techSubtitle": "Chips grouped by where they show up in this repo.",
+    "interviewTitle": "Interview Q&A",
+    "interviewSubtitle": "Click a question to see the thinking behind the decisions.",
+    "interviewAriaExpand": "Expand answer",
+    "interviewAriaCollapse": "Collapse answer",
+    "projectLinks": "Links",
+    "projectHighlights": "Highlights",
+    "projectTech": "Built with",
+    "profileError": "Couldn't load profile content — showing defaults.",
+    "splitAriaPortfolio": "Portfolio content column",
+    "splitAriaAgent": "Live Echo voice agent column"
   }
 }

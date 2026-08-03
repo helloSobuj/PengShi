@@ -154,5 +154,32 @@
     "errorIngest": "导入失败",
     "errorDelete": "删除失败",
     "deleteConfirm": "确认删除此文档？"
+  },
+  "portfolio": {
+    "navAbout": "关于我",
+    "navProjects": "项目",
+    "navTech": "技术栈",
+    "navInterview": "面试 Q&A",
+    "navHistory": "对话历史",
+    "navKB": "知识库",
+    "navAdmin": "管理员",
+    "heroGreeting": "你好，我是一名 AI 工程方向的实习生 —— 这是我的个人作品集，右边的 Echo 可以用语音把它『讲给你听』。",
+    "heroCta": "点击右下角麦克风，试试问它：『介绍一下你的 RAG 知识库实现』或者『这个项目如何扩展到百万级文档？』",
+    "aboutTitle": "关于我",
+    "aboutSubtitle": "比起一页简历 PDF，更愿意让你直接跑一段可演示的代码。",
+    "projectsTitle": "项目作品",
+    "projectsSubtitle": "每一张卡片都是我完整交付过的东西，不是教程 Demo。",
+    "techTitle": "技术栈",
+    "techSubtitle": "按它们在这个仓库里实际出现的位置分组展示。",
+    "interviewTitle": "面试常见问题",
+    "interviewSubtitle": "点开问题可以看当时做决策背后的思考过程。",
+    "interviewAriaExpand": "展开回答",
+    "interviewAriaCollapse": "收起回答",
+    "projectLinks": "链接",
+    "projectHighlights": "亮点",
+    "projectTech": "技术",
+    "profileError": "无法加载个人资料内容，正在显示默认文案。",
+    "splitAriaPortfolio": "作品集内容列",
+    "splitAriaAgent": "实时 Echo 语音助手列"
   }
 }

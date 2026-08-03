@@ -54,6 +54,14 @@ RUN uv sync --locked
 # loading your agent code.
 RUN uv run --module livekit.agents download-files
 
+# Pre-cache the RAG embedding model (BAAI/bge-m3, multilingual EN + 中文).
+# Prevents 1+ minute cold-start on first rag_search after a deploy.
+# Writes to /app/.cache/huggingface which is preserved in the final stage.
+# If sentence-transformers is not installed (you stripped RAG deps), this exits 0.
+COPY src/rag/_docker_precache.py src/rag/_docker_precache.py
+RUN mkdir -p /app/.cache/huggingface /app/.cache/torch \
+  && (RAG_DISABLED=true uv run -- python src/rag/_docker_precache.py || true)
+
 # Copy all remaining application files into the container
 # This includes source code, configuration files, and dependency specifications
 # (Excludes files specified in .dockerignore)

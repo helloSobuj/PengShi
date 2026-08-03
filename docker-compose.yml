@@ -1,0 +1,114 @@
+# Self-hosted Echo Intern Portfolio — one-command local deploy.
+#
+# Usage:
+#   1. Copy .env.example → .env and fill LIVEKIT_* + any BYOK keys.
+#   2. `docker compose up -d --build`
+#   3. Open http://localhost:3000
+#
+# Data (SQLite + Chroma + uploads) lives in the `echo_data` Docker volume,
+# so containers can be rebuilt without losing your KB or chat history.
+
+name: echo-intern-portfolio
+services:
+  agent:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    environment:
+      # -- LiveKit Cloud (required) --
+      LIVEKIT_URL: ${LIVEKIT_URL}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET}
+      # -- Agent behaviour --
+      MODEL_MODE: ${MODEL_MODE:-inference}
+      INFERENCE_TTS_VOICE: ${INFERENCE_TTS_VOICE:-Ashley}
+      # Optional: BYOK mode keys
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_LLM_MODEL: ${OPENAI_LLM_MODEL:-gpt-4.1-mini}
+      DEEPGRAM_API_KEY: ${DEEPGRAM_API_KEY:-}
+      CARTESIA_API_KEY: ${CARTESIA_API_KEY:-}
+      CARTESIA_TTS_MODEL: ${CARTESIA_TTS_MODEL:-sonic-3}
+      CARTESIA_VOICE_ID: ${CARTESIA_VOICE_ID:-9626c31c-bec5-4cca-baa8-f8ba9e84c8bc}
+      # Optional: Vision via OpenRouter
+      VISION_ENABLED: ${VISION_ENABLED:-true}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-google/gemini-2.5-flash}
+      OPENROUTER_SITE_URL: ${OPENROUTER_SITE_URL:-http://localhost:3000}
+      OPENROUTER_APP_NAME: ${OPENROUTER_APP_NAME:-Echo Voice Agent}
+      # Optional: web search
+      TAVILY_API_KEY: ${TAVILY_API_KEY:-}
+      # -- Persistence & RAG --
+      DB_DISABLED: ${DB_DISABLED:-false}
+      RAG_DISABLED: ${RAG_DISABLED:-false}
+      RAG_MODEL: ${RAG_MODEL:-BAAI/bge-m3}
+      RAG_TOP_K: ${RAG_TOP_K:-4}
+      RAG_CHUNK_SIZE: ${RAG_CHUNK_SIZE:-500}
+      RAG_CHUNK_OVERLAP: ${RAG_CHUNK_OVERLAP:-80}
+      CHROMA_COLLECTION: ${CHROMA_COLLECTION:-echo_knowledge_base}
+      # Optional: MCP servers JSON array
+      MCP_SERVERS: ${MCP_SERVERS:-}
+    volumes:
+      - echo_data:/app/data
+      - echo_hf_cache:/app/.cache/huggingface
+      - echo_torch_cache:/app/.cache/torch
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    environment:
+      # -- LiveKit Cloud (same values as the agent) --
+      LIVEKIT_URL: ${LIVEKIT_URL}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET}
+      # -- Agent dispatch --
+      AGENT_NAME: ${AGENT_NAME:-echo-agent}
+      # Display-only; MODEL_MODE above is authoritative.
+      NEXT_PUBLIC_MODEL_MODE: ${NEXT_PUBLIC_MODEL_MODE:-inference}
+      # -- Persistence fallbacks --
+      # Shared data volume with the agent container → node:sqlite reads the
+      # same echo.sqlite3 that the Python agent writes to.
+      AGENT_DATA_DIR: /app/agent-data
+      AGENT_HISTORY_ENDPOINT: ${AGENT_HISTORY_ENDPOINT:-}
+      AGENT_KB_ENDPOINT: ${AGENT_KB_ENDPOINT:-}
+      KB_UPLOAD_DIR: ${KB_UPLOAD_DIR:-/app/agent-data/rag/uploads}
+      # -- Admin panel --
+      # Admin password — required for /admin on a public host.
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+      # Path to the shared JSON configs (mounted via the shared data volume).
+      AGENT_CONFIG_PATH: /app/agent-data/api_config.json
+      AGENT_MCP_CONFIG_PATH: /app/agent-data/mcp_servers.json
+      # Read-only by default when deploying behind a reverse proxy.
+      # Set to "false" to allow the web admin panel to write JSON configs back
+      # to the shared volume (works because web and agent share AGENT_DATA_DIR).
+      AGENT_CONFIG_READONLY: ${AGENT_CONFIG_READONLY:-false}
+      # -- i18n --
+      NEXT_PUBLIC_DEFAULT_LOCALE: ${NEXT_PUBLIC_DEFAULT_LOCALE:-zh}
+      # -- Token policy --
+      # Keep `ALLOW_PUBLIC_TOKEN=false` on any internet-exposed host.
+      ALLOW_PUBLIC_TOKEN: ${ALLOW_PUBLIC_TOKEN:-false}
+      # Optional: sandbox token server
+      NEXT_PUBLIC_USE_SANDBOX: ${NEXT_PUBLIC_USE_SANDBOX:-false}
+      NEXT_PUBLIC_SANDBOX_ID: ${NEXT_PUBLIC_SANDBOX_ID:-}
+      NEXT_PUBLIC_CONN_DETAILS_ENDPOINT: ${NEXT_PUBLIC_CONN_DETAILS_ENDPOINT:-}
+      SANDBOX_ID: ${SANDBOX_ID:-}
+    volumes:
+      # Same data dir layout the agent uses; node:sqlite reads it in-place.
+      - echo_data:/app/agent-data
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    restart: unless-stopped
+    depends_on:
+      - agent
+
+volumes:
+  echo_data:
+    # Persisted SQLite, config JSON, Chroma vectors, rag uploads.
+    name: echo_data
+  echo_hf_cache:
+    # HuggingFace embedding model files — avoid re-downloading on every restart.
+    name: echo_hf_cache
+  echo_torch_cache:
+    # PyTorch cached artifacts.
+    name: echo_torch_cache

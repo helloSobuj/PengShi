@@ -111,6 +111,26 @@ vercel env add NEXT_PUBLIC_MODEL_MODE inference
 vercel env add ADMIN_PASSWORD 'change-me'    # password for /admin
 vercel env add AGENT_CONFIG_PATH ''          # leave blank on Vercel — writes won't persist
 
+# --- Knowledge Base / RAG on Vercel ---
+# Vercel serverless functions have an **ephemeral, read-only filesystem** after deploy.
+# node:sqlite CAN read from a filesystem path (bundled or /tmp), but writes would not
+# persist and the agent's data dir is not co-located with the Next.js bundle anyway.
+# Two paths:
+#
+#   A) (Recommended for production) Expose the agent's HTTP API on the internet and point
+#      the web UI at it. The agent runs on LiveKit Cloud OR a VPS with writable disk.
+#      Set:
+vercel env add AGENT_HISTORY_ENDPOINT https://agent-api.example.com
+vercel env add AGENT_KB_ENDPOINT      https://agent-api.example.com
+#      These endpoints must serve /history/sessions* and /kb/* respectively.
+#
+#   B) (Read-only historical playback) Set AGENT_DATA_DIR to a path within the
+#      Next.js bundle and commit a seed of echo.sqlite3. This is a demo-only path
+#      and any user uploads or new chat history won't be saved.
+
+# i18n default locale for first-time visitors (en | zh)
+vercel env add NEXT_PUBLIC_DEFAULT_LOCALE zh
+
 # Deploy to production
 vercel --prod
 ```
@@ -119,7 +139,73 @@ Vercel will print a URL like `https://echo-web-xxxx.vercel.app`. Open it and try
 
 ---
 
-## 3. Local Quick-Test (skip cloud)
+## 3. Knowledge Base / RAG deployment notes
+
+### 3.1 RAG pre-cache
+
+The agent `Dockerfile` runs `src/rag/_docker_precache.py` after `uv sync`. This downloads
+`BAAI/bge-m3` (~1.2 GB in HuggingFace cache) and warms it up with a small encode so the
+first user's `rag_search` call doesn't sit through a ~60s cold-start model download.
+
+If you deploy without RAG deps (stripped `pyproject.toml`), the pre-cache step exits 0 — it's
+graceful.
+
+### 3.2 Two tiers of storage
+
+| Tier | Where it runs | Persistent? | Path |
+| --- | --- | --- | --- |
+| SQL metadata + JSON configs | agent/data on the agent host (LiveKit Cloud disk / volume) | ✅ yes | `/app/data/echo.sqlite3` and friends |
+| Chroma vectors + rag uploads | alongside the agent | ✅ yes | `/app/data/rag/chroma`, `/app/data/rag/uploads` |
+| ML model weights | on the agent image (built-in) | ✅ yes (layer cache) | `/app/.cache/huggingface` |
+| Web's local fallback reads | only in docker-compose or on your laptop (shared volume) | ⚠️ yes if volume mounted | same `AGENT_DATA_DIR` via shared volume |
+
+### 3.3 Upgrading / wiping RAG state
+
+```bash
+# Inside the agent container or agent host:
+rm -rf data/rag/chroma   # delete all embeddings (rebuild on next ingest)
+# And optionally zero out chunk counts so the KB page reflects 0 chunks:
+uv run python -c "
+from db import init_db, DatabaseSession, KnowledgeDoc
+init_db()
+with DatabaseSession() as s:
+    for d in s.query(KnowledgeDoc).all():
+        d.chunk_count = 0
+    s.commit()
+"
+```
+
+---
+
+## 4. One-command self-host (docker-compose)
+
+For a VPS or laptop: both containers + persistent volume in one command.
+
+```bash
+# 1) copy env template to .env in repo root
+cp .env.example .env
+$EDITOR .env      # fill LIVEKIT_URL/LIVEKIT_API_KEY/LIVEKIT_API_SECRET at minimum
+
+# 2) build + start (detached)
+docker compose up -d --build
+
+# 3) open http://localhost:3000 (or $WEB_PORT if overridden)
+
+# 4) tail logs
+docker compose logs -f agent web
+```
+
+The `echo_data` named volume holds `echo.sqlite3`, `api_config.json`, `mcp_servers.json`,
+`profile.json`, Chroma vectors (`rag/chroma/`), and uploaded PDFs (`rag/uploads/`). It's
+shared between the `agent` and `web` containers so `/api/history/sessions` and
+`/api/knowledge-base/*` can read it directly via `node:sqlite` without a separate HTTP
+micro-service.
+
+The `echo_hf_cache` and `echo_torch_cache` volumes keep the bge-m3 model between rebuilds.
+
+---
+
+## 5. Local Quick-Test (skip cloud)
 
 You already have this running on `http://localhost:3000`. To enable the voice
 agent locally without cloud credentials:
