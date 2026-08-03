@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
 import type { AppConfig } from '@/app-config';
 import { McpConnectorsPanel } from '@/components/app/mcp-connectors-panel';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Link } from '@/i18n/navigation';
 
 interface SettingsPanelProps {
   appConfig: AppConfig;
@@ -46,9 +46,7 @@ export function SettingsPanel({ appConfig }: SettingsPanelProps) {
             </div>
           </dl>
 
-          <p className="text-muted-foreground mt-4 text-xs leading-5">
-            {t('settings.byokHint')}
-          </p>
+          <p className="text-muted-foreground mt-4 text-xs leading-5">{t('settings.byokHint')}</p>
 
           <Separator className="my-4" />
 
@@ -58,6 +56,10 @@ export function SettingsPanel({ appConfig }: SettingsPanelProps) {
 
           <Button asChild variant="outline" size="sm" className="w-full">
             <Link href="/history">{t('settings.history')}</Link>
+          </Button>
+
+          <Button asChild variant="outline" size="sm" className="mt-2 w-full">
+            <Link href="/knowledge-base">{t('settings.knowledgeBase')}</Link>
           </Button>
 
           <Button asChild variant="outline" size="sm" className="mt-2 w-full">

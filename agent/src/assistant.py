@@ -13,7 +13,8 @@ from livekit import rtc
 from livekit.agents import Agent, ChatContext, ChatMessage, get_job_context
 from livekit.agents.llm import ImageContent
 
-from tools import get_current_time, list_notes, save_note, web_search
+from rag import is_rag_available
+from tools import get_current_time, list_notes, rag_search, save_note, web_search
 
 logger = logging.getLogger("agent")
 
@@ -55,6 +56,7 @@ DEFAULT_INSTRUCTIONS = textwrap.dedent(
     - Use list_notes when the user asks what you remember or to read their notes.
     - Use get_current_time when asked for the date or time.
     - Use web_search to find current information from the internet when the user asks about recent events, facts, or anything that may have changed.
+    - Use rag_search to look up facts or references in the user's uploaded documents (knowledge base, PDFs, web links, notes). Prefer it for static private information.
     - External MCP tools may be available depending on configuration. When they are, use them for matching user requests. Never invent tool results.
     - Confirm actions briefly after using a tool.
 
@@ -112,6 +114,10 @@ def _vision_enabled() -> bool:
     return os.getenv("VISION_ENABLED", "true").strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _has_rag() -> bool:
+    return is_rag_available(quiet=False)
+
+
 class PersonalAssistant(Agent):
     """Voice assistant with optional live camera/screen vision via frame sampling."""
 
@@ -120,6 +126,8 @@ class PersonalAssistant(Agent):
         tools = [save_note, list_notes, get_current_time]
         if _has_tavily_key():
             tools.append(web_search)
+        if _has_rag():
+            tools.append(rag_search)
 
         self._latest_frame: rtc.VideoFrame | None = None
         self._frame_width: int = 0
