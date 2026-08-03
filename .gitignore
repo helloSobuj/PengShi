@@ -1,0 +1,36 @@
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+**/.env.local
+**/.secrets.env
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+**/venv/
+**/.ruff_cache/
+**/.pytest_cache/
+**/uv.lock.bak
+agent/data/notes.json
+
+# Node / Next.js
+web/node_modules/
+web/.next/
+web/out/
+web/.vercel/
+**/*.tsbuildinfo
+web/next-env.d.ts
+.pnpm-store/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# LiveKit
+**/livekit.toml.bak
