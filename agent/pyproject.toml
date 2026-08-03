@@ -13,6 +13,7 @@ dependencies = [
     "livekit-plugins-ai-coustics~=0.2",
     "python-dotenv",
     "httpx",
+    "sqlmodel>=0.0.22",
 ]
 
 [dependency-groups]

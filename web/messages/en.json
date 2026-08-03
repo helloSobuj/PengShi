@@ -20,7 +20,8 @@
     "modelMode": "Model mode",
     "agentName": "Agent name",
     "byokHint": "Switch to BYOK by setting MODEL_MODE=byok in agent/.env.local. See the project README.",
-    "adminPanel": "Admin Panel"
+    "adminPanel": "Admin Panel",
+    "history": "Chat History"
   },
   "mcp": {
     "title": "MCP Connectors",
@@ -80,5 +81,28 @@
     "toggle": "Language",
     "en": "English",
     "zh": "中文"
+  },
+  "history": {
+    "pageTitle": "Chat History",
+    "pageSubtitle": "Review your past voice conversations with Echo.",
+    "backToHome": "Back to home",
+    "loading": "Loading sessions...",
+    "noSessions": "No conversation history yet.",
+    "noSessionsHint": "Your first chat session with Echo will appear here.",
+    "dbDisabled": "History is not available right now.",
+    "dbDisabledHint": "Make sure the agent is running with SQLite enabled, or configure AGENT_HISTORY_ENDPOINT / AGENT_DATA_DIR.",
+    "session": "Session {index}",
+    "sessionRoom": "Room {name}",
+    "messageCount": "{count} messages",
+    "mode": "Mode: {mode}",
+    "active": "Active",
+    "ended": "Ended",
+    "selectToView": "Select a session on the left to view the transcript.",
+    "sessionMissing": "Session not found or history unavailable.",
+    "emptyTranscript": "No messages in this session yet.",
+    "user": "User",
+    "assistant": "Echo",
+    "justNow": "just now",
+    "refresh": "Refresh"
   }
 }

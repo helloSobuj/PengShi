@@ -20,7 +20,8 @@
     "modelMode": "模型模式",
     "agentName": "代理名称",
     "byokHint": "在 agent/.env.local 中设置 MODEL_MODE=byok 切换到 BYOK 模式。详见项目 README。",
-    "adminPanel": "管理面板"
+    "adminPanel": "管理面板",
+    "history": "聊天历史"
   },
   "mcp": {
     "title": "MCP 连接器",
@@ -80,5 +81,28 @@
     "toggle": "语言",
     "en": "English",
     "zh": "中文"
+  },
+  "history": {
+    "pageTitle": "聊天历史",
+    "pageSubtitle": "查看你与 Echo 的历史语音对话。",
+    "backToHome": "返回首页",
+    "loading": "正在加载会话...",
+    "noSessions": "暂无对话历史。",
+    "noSessionsHint": "你与 Echo 的第一次聊天将显示在这里。",
+    "dbDisabled": "历史记录当前不可用。",
+    "dbDisabledHint": "请确保代理在启用 SQLite 的情况下运行，或配置 AGENT_HISTORY_ENDPOINT / AGENT_DATA_DIR。",
+    "session": "第 {index} 个会话",
+    "sessionRoom": "房间 {name}",
+    "messageCount": "{count} 条消息",
+    "mode": "模式：{mode}",
+    "active": "进行中",
+    "ended": "已结束",
+    "selectToView": "选择左侧会话以查看文字记录。",
+    "sessionMissing": "会话不存在或历史不可用。",
+    "emptyTranscript": "本次会话尚无消息。",
+    "user": "你",
+    "assistant": "Echo",
+    "justNow": "刚刚",
+    "refresh": "刷新"
   }
 }

@@ -57,6 +57,10 @@ export function SettingsPanel({ appConfig }: SettingsPanelProps) {
           <Separator className="my-4" />
 
           <Button asChild variant="outline" size="sm" className="w-full">
+            <Link href="/history">{t('settings.history')}</Link>
+          </Button>
+
+          <Button asChild variant="outline" size="sm" className="mt-2 w-full">
             <Link href="/admin">{t('settings.adminPanel')}</Link>
           </Button>
 
