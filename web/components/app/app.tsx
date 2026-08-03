@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { TokenSource } from 'livekit-client';
 import { useSession } from '@livekit/components-react';
 import { WarningIcon } from '@phosphor-icons/react/dist/ssr';
@@ -64,6 +65,7 @@ function createTokenSource(appConfig: AppConfig) {
 }
 
 export function App({ appConfig }: AppProps) {
+  const t = useTranslations('audio');
   const tokenSource = useMemo(() => createTokenSource(appConfig), [appConfig]);
 
   const session = useSession(
@@ -78,7 +80,7 @@ export function App({ appConfig }: AppProps) {
       <main className="grid h-svh grid-cols-1 place-content-center">
         <ViewController appConfig={appConfig} />
       </main>
-      <StartAudioButton label="Start Audio" />
+      <StartAudioButton label={t('start')} />
       <Toaster
         icons={{
           warning: <WarningIcon weight="bold" />,

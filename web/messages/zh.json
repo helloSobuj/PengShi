@@ -1,0 +1,84 @@
+{
+  "common": {
+    "settings": "设置",
+    "close": "关闭",
+    "delete": "删除",
+    "enabled": "已启用",
+    "loading": "加载中...",
+    "saving": "保存中...",
+    "companyName": "Echo"
+  },
+  "welcome": {
+    "title": "Echo",
+    "description": "你的个人语音助手。允许麦克风访问，然后自然地说话。",
+    "startButton": "开始对话",
+    "tip": "提示：请确保 Echo 代理在连接前已启动。打开设置以添加 MCP 连接器。"
+  },
+  "settings": {
+    "title": "操作员设置",
+    "description": "模型密钥在代理服务器上配置，绝不在浏览器中存储。",
+    "modelMode": "模型模式",
+    "agentName": "代理名称",
+    "byokHint": "在 agent/.env.local 中设置 MODEL_MODE=byok 切换到 BYOK 模式。详见项目 README。",
+    "adminPanel": "管理面板"
+  },
+  "mcp": {
+    "title": "MCP 连接器",
+    "description": "为此浏览器添加 HTTP/SSE MCP 服务器。凭据仅存储在本地存储中供个人使用。代理上的管理员默认设置仍然适用。",
+    "empty": "尚无个人连接器。如果代理上设置了管理员 MCP 服务器，仍可使用。",
+    "namePlaceholder": "名称",
+    "urlPlaceholder": "https://example.com/sse",
+    "authPlaceholder": "授权（可选 Bearer 令牌）",
+    "addButton": "添加连接器"
+  },
+  "theme": {
+    "toggle": "配色方案切换",
+    "dark": "启用深色配色方案",
+    "light": "启用浅色配色方案",
+    "system": "启用系统配色方案"
+  },
+  "audio": {
+    "start": "启动音频"
+  },
+  "admin": {
+    "title": "管理面板",
+    "subtitle": "配置 Echo 的 API 密钥和集成。",
+    "loginPrompt": "请输入管理员密码以继续。",
+    "password": "密码",
+    "passwordPlaceholder": "输入管理员密码",
+    "signIn": "登录",
+    "signOut": "退出登录",
+    "loginFailed": "登录失败",
+    "saveChanges": "保存更改",
+    "savedSuccessfully": "设置已成功保存。",
+    "saveFailed": "保存设置失败。",
+    "tavilyTitle": "Tavily 网络搜索",
+    "tavilyDescription": "启用 Tavily 让 Echo 搜索网络获取最新信息。",
+    "apiKey": "API 密钥",
+    "apiKeyPlaceholder": "粘贴你的 Tavily API 密钥",
+    "apiKeyKeep": "留空以保留现有密钥",
+    "apiKeyManaged": "通过代理密钥管理",
+    "apiKeyHint": "从 tavily.com 获取免费 API 密钥。本地保存到 agent/data/api_config.json。",
+    "webSearchEnabled": "网络搜索已启用",
+    "webSearchDescription": "禁用后，即使配置了密钥，Echo 也不会使用 Tavily。",
+    "configured": "已配置",
+    "notSet": "未设置",
+    "setOnAgent": "在代理密钥中设置",
+    "mcpTitle": "MCP 默认配置",
+    "mcpDescription": "每个 Echo 会话的管理员默认 MCP 服务器。用户仍可在设置中添加个人连接器。",
+    "mcpNone": "无",
+    "mcpConfigured": "已配置 {count} 个",
+    "mcpHint": "在生产环境中，将代理密钥 MCP_SERVERS 设置为 JSON 数组。本地可保存到 agent/data/mcp_servers.json。",
+    "saveMcp": "保存 MCP 默认配置",
+    "mcpSaved": "MCP 默认配置已保存到 agent/data/mcp_servers.json。",
+    "mcpSaveFailed": "保存 MCP 默认配置失败。",
+    "mcpInvalidJson": "MCP JSON 必须是有效的数组。",
+    "productionNote": "生产环境提示",
+    "productionDescription": "此 Vercel 部署无法将密钥保存到磁盘（只读文件系统）。请改为配置代理密钥：TAVILY_API_KEY、MCP_SERVERS。"
+  },
+  "lang": {
+    "toggle": "语言",
+    "en": "English",
+    "zh": "中文"
+  }
+}

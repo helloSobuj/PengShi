@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 
 function WelcomeImage() {
@@ -19,24 +22,26 @@ function WelcomeImage() {
 }
 
 interface WelcomeViewProps {
-  startButtonText: string;
   onStartCall: () => void;
 }
 
 export const WelcomeView = ({
-  startButtonText,
   onStartCall,
   ref,
 }: React.ComponentProps<'div'> & WelcomeViewProps) => {
+  const t = useTranslations('welcome');
+
   return (
     <div ref={ref}>
       <section className="bg-background flex flex-col items-center justify-center text-center">
         <WelcomeImage />
 
-        <h1 className="text-foreground text-3xl font-semibold tracking-tight sm:text-4xl">Echo</h1>
+        <h1 className="text-foreground text-3xl font-semibold tracking-tight sm:text-4xl">
+          {t('title')}
+        </h1>
 
         <p className="text-muted-foreground max-w-md pt-3 text-sm leading-6 sm:text-base">
-          Your personal voice assistant. Allow microphone access, then speak naturally.
+          {t('description')}
         </p>
 
         <Button
@@ -44,13 +49,10 @@ export const WelcomeView = ({
           onClick={onStartCall}
           className="mt-8 w-64 rounded-full font-mono text-xs font-bold tracking-wider uppercase"
         >
-          {startButtonText}
+          {t('startButton')}
         </Button>
 
-        <p className="text-muted-foreground mt-4 max-w-sm text-xs leading-5">
-          Tip: make sure the Echo agent is running before connecting. Open Settings to add MCP
-          connectors.
-        </p>
+        <p className="text-muted-foreground mt-4 max-w-sm text-xs leading-5">{t('tip')}</p>
       </section>
     </div>
   );

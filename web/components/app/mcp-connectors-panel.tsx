@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -18,6 +19,8 @@ function newId(): string {
 }
 
 export function McpConnectorsPanel() {
+  const t = useTranslations();
+  const tm = useTranslations('mcp');
   const [servers, setServers] = useState<McpServerConfig[]>([]);
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
@@ -76,18 +79,12 @@ export function McpConnectorsPanel() {
   return (
     <div className="space-y-3">
       <div>
-        <h3 className="text-sm font-semibold">MCP Connectors</h3>
-        <p className="text-muted-foreground mt-1 text-xs leading-5">
-          Add HTTP/SSE MCP servers for this browser. Credentials stay in local storage for personal
-          use only. Admin defaults on the agent still apply.
-        </p>
+        <h3 className="text-sm font-semibold">{tm('title')}</h3>
+        <p className="text-muted-foreground mt-1 text-xs leading-5">{tm('description')}</p>
       </div>
 
       {servers.length === 0 ? (
-        <p className="text-muted-foreground text-xs leading-5">
-          No personal connectors yet. You can still use admin-configured MCP servers if set on the
-          agent.
-        </p>
+        <p className="text-muted-foreground text-xs leading-5">{tm('empty')}</p>
       ) : (
         <ul className="space-y-2">
           {servers.map((server) => (
@@ -107,7 +104,7 @@ export function McpConnectorsPanel() {
                   className="shrink-0"
                   onClick={() => removeServer(server.id)}
                 >
-                  Delete
+                  {t('common.delete')}
                 </Button>
               </div>
               <label className="flex items-center gap-2">
@@ -116,7 +113,7 @@ export function McpConnectorsPanel() {
                   checked={server.enabled}
                   onChange={() => toggleEnabled(server.id)}
                 />
-                <span>Enabled</span>
+                <span>{t('common.enabled')}</span>
               </label>
             </li>
           ))}
@@ -128,26 +125,26 @@ export function McpConnectorsPanel() {
       <form onSubmit={handleAdd} className="space-y-2">
         <input
           className="border-border bg-background w-full rounded-md border px-2 py-1.5 text-xs"
-          placeholder="Name"
+          placeholder={tm('namePlaceholder')}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <input
           className="border-border bg-background w-full rounded-md border px-2 py-1.5 text-xs"
-          placeholder="https://example.com/sse"
+          placeholder={tm('urlPlaceholder')}
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           required
         />
         <input
           className="border-border bg-background w-full rounded-md border px-2 py-1.5 text-xs"
-          placeholder="Authorization (optional bearer token)"
+          placeholder={tm('authPlaceholder')}
           value={auth}
           onChange={(e) => setAuth(e.target.value)}
         />
         {error ? <p className="text-destructive text-xs">{error}</p> : null}
         <Button type="submit" size="sm" className="w-full">
-          Add connector
+          {tm('addButton')}
         </Button>
       </form>
     </div>

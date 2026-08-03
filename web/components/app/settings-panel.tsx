@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import type { AppConfig } from '@/app-config';
 import { McpConnectorsPanel } from '@/components/app/mcp-connectors-panel';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ interface SettingsPanelProps {
 }
 
 export function SettingsPanel({ appConfig }: SettingsPanelProps) {
+  const t = useTranslations();
   const [open, setOpen] = useState(false);
   const modelMode = appConfig.modelMode ?? 'inference';
 
@@ -23,30 +25,29 @@ export function SettingsPanel({ appConfig }: SettingsPanelProps) {
         className="rounded-full font-mono text-[10px] tracking-wider uppercase"
         onClick={() => setOpen((v) => !v)}
       >
-        Settings
+        {t('common.settings')}
       </Button>
 
       {open && (
         <div className="bg-popover text-popover-foreground border-border mt-2 max-h-[80vh] w-80 overflow-y-auto rounded-xl border p-4 shadow-lg">
-          <h2 className="text-sm font-semibold">Operator settings</h2>
+          <h2 className="text-sm font-semibold">{t('settings.title')}</h2>
           <p className="text-muted-foreground mt-1 text-xs leading-5">
-            Model keys are configured on the agent server, never in the browser.
+            {t('settings.description')}
           </p>
 
           <dl className="mt-4 space-y-3 text-xs">
             <div>
-              <dt className="text-muted-foreground">Model mode</dt>
+              <dt className="text-muted-foreground">{t('settings.modelMode')}</dt>
               <dd className="mt-0.5 font-mono font-medium">{modelMode}</dd>
             </div>
             <div>
-              <dt className="text-muted-foreground">Agent name</dt>
+              <dt className="text-muted-foreground">{t('settings.agentName')}</dt>
               <dd className="mt-0.5 font-mono font-medium">{appConfig.agentName ?? 'auto'}</dd>
             </div>
           </dl>
 
           <p className="text-muted-foreground mt-4 text-xs leading-5">
-            Switch to BYOK by setting <code className="font-mono">MODEL_MODE=byok</code> in{' '}
-            <code className="font-mono">agent/.env.local</code>. See the project README.
+            {t('settings.byokHint')}
           </p>
 
           <Separator className="my-4" />
@@ -56,11 +57,11 @@ export function SettingsPanel({ appConfig }: SettingsPanelProps) {
           <Separator className="my-4" />
 
           <Button asChild variant="outline" size="sm" className="w-full">
-            <Link href="/admin">Admin Panel</Link>
+            <Link href="/admin">{t('settings.adminPanel')}</Link>
           </Button>
 
           <Button variant="ghost" size="sm" className="mt-2 w-full" onClick={() => setOpen(false)}>
-            Close
+            {t('common.close')}
           </Button>
         </div>
       )}

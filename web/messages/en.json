@@ -1,0 +1,84 @@
+{
+  "common": {
+    "settings": "Settings",
+    "close": "Close",
+    "delete": "Delete",
+    "enabled": "Enabled",
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "companyName": "Echo"
+  },
+  "welcome": {
+    "title": "Echo",
+    "description": "Your personal voice assistant. Allow microphone access, then speak naturally.",
+    "startButton": "Start conversation",
+    "tip": "Tip: make sure the Echo agent is running before connecting. Open Settings to add MCP connectors."
+  },
+  "settings": {
+    "title": "Operator settings",
+    "description": "Model keys are configured on the agent server, never in the browser.",
+    "modelMode": "Model mode",
+    "agentName": "Agent name",
+    "byokHint": "Switch to BYOK by setting MODEL_MODE=byok in agent/.env.local. See the project README.",
+    "adminPanel": "Admin Panel"
+  },
+  "mcp": {
+    "title": "MCP Connectors",
+    "description": "Add HTTP/SSE MCP servers for this browser. Credentials stay in local storage for personal use only. Admin defaults on the agent still apply.",
+    "empty": "No personal connectors yet. You can still use admin-configured MCP servers if set on the agent.",
+    "namePlaceholder": "Name",
+    "urlPlaceholder": "https://example.com/sse",
+    "authPlaceholder": "Authorization (optional bearer token)",
+    "addButton": "Add connector"
+  },
+  "theme": {
+    "toggle": "Color scheme toggle",
+    "dark": "Enable dark color scheme",
+    "light": "Enable light color scheme",
+    "system": "Enable system color scheme"
+  },
+  "audio": {
+    "start": "Start Audio"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "Configure API keys and integrations for Echo.",
+    "loginPrompt": "Enter the administrator password to continue.",
+    "password": "Password",
+    "passwordPlaceholder": "Enter admin password",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "loginFailed": "Login failed",
+    "saveChanges": "Save Changes",
+    "savedSuccessfully": "Settings saved successfully.",
+    "saveFailed": "Failed to save settings.",
+    "tavilyTitle": "Tavily Web Search",
+    "tavilyDescription": "Enable Echo to search the web for current information using Tavily.",
+    "apiKey": "API Key",
+    "apiKeyPlaceholder": "Paste your Tavily API key",
+    "apiKeyKeep": "Leave blank to keep existing key",
+    "apiKeyManaged": "Managed via agent secrets",
+    "apiKeyHint": "Get a free API key from tavily.com. Local saves go to agent/data/api_config.json.",
+    "webSearchEnabled": "Web Search Enabled",
+    "webSearchDescription": "When disabled, Echo will not use Tavily even if a key is configured.",
+    "configured": "Configured",
+    "notSet": "Not set",
+    "setOnAgent": "Set on agent secrets",
+    "mcpTitle": "MCP defaults",
+    "mcpDescription": "Admin-default MCP servers for every Echo session. Users can still add personal connectors in Settings.",
+    "mcpNone": "None",
+    "mcpConfigured": "{count} configured",
+    "mcpHint": "In production, set the agent secret MCP_SERVERS to a JSON array. Locally you can save to agent/data/mcp_servers.json.",
+    "saveMcp": "Save MCP defaults",
+    "mcpSaved": "MCP defaults saved to agent/data/mcp_servers.json.",
+    "mcpSaveFailed": "Failed to save MCP defaults.",
+    "mcpInvalidJson": "MCP JSON must be a valid array.",
+    "productionNote": "Production note",
+    "productionDescription": "This Vercel deployment cannot save keys to disk (read-only filesystem). Configure agent secrets instead: TAVILY_API_KEY, MCP_SERVERS."
+  },
+  "lang": {
+    "toggle": "Language",
+    "en": "English",
+    "zh": "中文"
+  }
+}

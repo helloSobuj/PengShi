@@ -1,6 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
+import { useTranslations } from 'next-intl';
 import { MonitorIcon, MoonIcon, SunIcon } from '@phosphor-icons/react';
 import { cn } from '@/lib/shadcn/utils';
 
@@ -10,6 +11,7 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
+  const t = useTranslations('theme');
 
   return (
     <div
@@ -18,9 +20,9 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         className
       )}
     >
-      <span className="sr-only">Color scheme toggle</span>
+      <span className="sr-only">{t('toggle')}</span>
       <button type="button" onClick={() => setTheme('dark')} className="cursor-pointer p-1 pl-1.5">
-        <span className="sr-only">Enable dark color scheme</span>
+        <span className="sr-only">{t('dark')}</span>
         <MoonIcon
           suppressHydrationWarning
           size={16}
@@ -33,7 +35,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         onClick={() => setTheme('light')}
         className="cursor-pointer px-1.5 py-1"
       >
-        <span className="sr-only">Enable light color scheme</span>
+        <span className="sr-only">{t('light')}</span>
         <SunIcon
           suppressHydrationWarning
           size={16}
@@ -46,7 +48,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         onClick={() => setTheme('system')}
         className="cursor-pointer p-1 pr-1.5"
       >
-        <span className="sr-only">Enable system color scheme</span>
+        <span className="sr-only">{t('system')}</span>
         <MonitorIcon
           suppressHydrationWarning
           size={16}

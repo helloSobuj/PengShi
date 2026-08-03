@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
@@ -40,6 +41,8 @@ const MCP_EXAMPLE = `[
 ]`;
 
 export default function AdminPage() {
+  const t = useTranslations('admin');
+  const tc = useTranslations('common');
   const [isAuthed, setIsAuthed] = useState(false);
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -90,10 +93,10 @@ export default function AdminPage() {
         await checkAuth();
       } else {
         const data = await res.json();
-        setLoginError(data.error || 'Login failed');
+        setLoginError(data.error || t('loginFailed'));
       }
     } catch {
-      setLoginError('Login failed');
+      setLoginError(t('loginFailed'));
     }
   }
 
@@ -130,17 +133,17 @@ export default function AdminPage() {
       if (res.ok) {
         setConfig(data);
         setSaveOk(true);
-        setSaveMessage('Settings saved successfully.');
+        setSaveMessage(t('savedSuccessfully'));
         if (tavilyKey.trim()) {
           setTavilyKey('');
         }
       } else {
         setSaveOk(false);
-        setSaveMessage(typeof data.error === 'string' ? data.error : 'Failed to save settings.');
+        setSaveMessage(typeof data.error === 'string' ? data.error : t('saveFailed'));
       }
     } catch {
       setSaveOk(false);
-      setSaveMessage('Failed to save settings.');
+      setSaveMessage(t('saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -162,16 +165,16 @@ export default function AdminPage() {
         setConfig(data);
         setMcpJson(JSON.stringify(data.mcp_servers ?? [], null, 2));
         setSaveOk(true);
-        setSaveMessage('MCP defaults saved to agent/data/mcp_servers.json.');
+        setSaveMessage(t('mcpSaved'));
       } else {
         setSaveOk(false);
         setSaveMessage(
-          typeof data.error === 'string' ? data.error : 'Failed to save MCP defaults.'
+          typeof data.error === 'string' ? data.error : t('mcpSaveFailed')
         );
       }
     } catch {
       setSaveOk(false);
-      setSaveMessage('MCP JSON must be a valid array.');
+      setSaveMessage(t('mcpInvalidJson'));
     } finally {
       setSavingMcp(false);
     }
@@ -180,7 +183,7 @@ export default function AdminPage() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="text-muted-foreground">{tc('loading')}</div>
       </div>
     );
   }
@@ -190,15 +193,13 @@ export default function AdminPage() {
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="bg-card w-full max-w-sm space-y-6 rounded-xl border p-8 shadow-sm">
           <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Admin Panel</h1>
-            <p className="text-muted-foreground text-sm">
-              Enter the administrator password to continue.
-            </p>
+            <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+            <p className="text-muted-foreground text-sm">{t('loginPrompt')}</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="password" className="text-sm font-medium">
-                Password
+                {t('password')}
               </label>
               <input
                 id="password"
@@ -206,13 +207,13 @@ export default function AdminPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-background focus-visible:border-ring focus-visible:ring-ring/50 w-full rounded-md border px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-2"
-                placeholder="Enter admin password"
+                placeholder={t('passwordPlaceholder')}
                 autoFocus
               />
               {loginError && <p className="text-destructive text-sm">{loginError}</p>}
             </div>
             <Button type="submit" className="w-full">
-              Sign In
+              {t('signIn')}
             </Button>
           </form>
         </div>
@@ -226,13 +227,11 @@ export default function AdminPage() {
     <div className="mx-auto max-w-2xl p-6">
       <div className="flex items-center justify-between pb-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Admin Panel</h1>
-          <p className="text-muted-foreground text-sm">
-            Configure API keys and integrations for Echo.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+          <p className="text-muted-foreground text-sm">{t('subtitle')}</p>
         </div>
         <Button variant="ghost" size="sm" onClick={handleLogout}>
-          Sign Out
+          {t('signOut')}
         </Button>
       </div>
 
@@ -240,12 +239,8 @@ export default function AdminPage() {
 
       {readonly && (
         <div className="bg-muted/40 mb-6 rounded-xl border p-4 text-sm leading-6">
-          <p className="font-medium">Production note</p>
-          <p className="text-muted-foreground mt-1">
-            This Vercel deployment cannot save keys to disk (read-only filesystem). Configure agent
-            secrets instead: <code className="font-mono text-xs">TAVILY_API_KEY</code>,{' '}
-            <code className="font-mono text-xs">MCP_SERVERS</code>.
-          </p>
+          <p className="font-medium">{t('productionNote')}</p>
+          <p className="text-muted-foreground mt-1">{t('productionDescription')}</p>
           <p className="text-muted-foreground mt-2">
             Example:{' '}
             <code className="font-mono text-xs">
@@ -259,10 +254,8 @@ export default function AdminPage() {
         <section className="bg-card rounded-xl border p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold">Tavily Web Search</h2>
-              <p className="text-muted-foreground text-sm">
-                Enable Echo to search the web for current information using Tavily.
-              </p>
+              <h2 className="text-lg font-semibold">{t('tavilyTitle')}</h2>
+              <p className="text-muted-foreground text-sm">{t('tavilyDescription')}</p>
             </div>
             <div className="flex items-center gap-2">
               <span
@@ -272,10 +265,10 @@ export default function AdminPage() {
               />
               <span className="text-muted-foreground text-sm">
                 {readonly
-                  ? 'Set on agent secrets'
+                  ? t('setOnAgent')
                   : config?.tavily.configured
-                    ? 'Configured'
-                    : 'Not set'}
+                    ? t('configured')
+                    : t('notSet')}
               </span>
             </div>
           </div>
@@ -285,7 +278,7 @@ export default function AdminPage() {
           <div className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="tavily-key" className="text-sm font-medium">
-                API Key
+                {t('apiKey')}
               </label>
               <div className="flex gap-2">
                 <input
@@ -297,33 +290,20 @@ export default function AdminPage() {
                   className="bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex-1 rounded-md border px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-2 disabled:opacity-50"
                   placeholder={
                     readonly
-                      ? 'Managed via agent secrets'
+                      ? t('apiKeyManaged')
                       : config?.tavily.configured
-                        ? 'Leave blank to keep existing key'
-                        : 'Paste your Tavily API key'
+                        ? t('apiKeyKeep')
+                        : t('apiKeyPlaceholder')
                   }
                 />
               </div>
-              <p className="text-muted-foreground text-xs">
-                Get a free API key from{' '}
-                <a
-                  href="https://tavily.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-foreground underline underline-offset-4"
-                >
-                  tavily.com
-                </a>
-                . Local saves go to <code className="font-mono">agent/data/api_config.json</code>.
-              </p>
+              <p className="text-muted-foreground text-xs">{t('apiKeyHint')}</p>
             </div>
 
             <div className="flex items-center justify-between rounded-lg border p-3">
               <div>
-                <p className="text-sm font-medium">Web Search Enabled</p>
-                <p className="text-muted-foreground text-xs">
-                  When disabled, Echo will not use Tavily even if a key is configured.
-                </p>
+                <p className="text-sm font-medium">{t('webSearchEnabled')}</p>
+                <p className="text-muted-foreground text-xs">{t('webSearchDescription')}</p>
               </div>
               <button
                 type="button"
@@ -355,7 +335,7 @@ export default function AdminPage() {
               </span>
             )}
             <Button onClick={handleSave} disabled={saving || readonly}>
-              {saving ? 'Saving...' : 'Save Changes'}
+              {saving ? tc('saving') : t('saveChanges')}
             </Button>
           </div>
         </section>
@@ -363,11 +343,8 @@ export default function AdminPage() {
         <section className="bg-card rounded-xl border p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold">MCP defaults</h2>
-              <p className="text-muted-foreground text-sm">
-                Admin-default MCP servers for every Echo session. Users can still add personal
-                connectors in Settings.
-              </p>
+              <h2 className="text-lg font-semibold">{t('mcpTitle')}</h2>
+              <p className="text-muted-foreground text-sm">{t('mcpDescription')}</p>
             </div>
             <div className="flex items-center gap-2">
               <span
@@ -376,7 +353,7 @@ export default function AdminPage() {
                 }`}
               />
               <span className="text-muted-foreground text-sm">
-                {config?.mcp.configured ? `${config.mcp.count} configured` : 'None'}
+                {config?.mcp.configured ? t('mcpConfigured', { count: config.mcp.count }) : t('mcpNone')}
               </span>
             </div>
           </div>
@@ -384,11 +361,7 @@ export default function AdminPage() {
           <Separator className="my-4" />
 
           <div className="space-y-3 text-sm">
-            <p className="text-muted-foreground leading-6">
-              In production, set the agent secret{' '}
-              <code className="font-mono text-xs">MCP_SERVERS</code> to a JSON array. Locally you
-              can save to <code className="font-mono text-xs">agent/data/mcp_servers.json</code>.
-            </p>
+            <p className="text-muted-foreground leading-6">{t('mcpHint')}</p>
             <pre className="bg-muted/50 overflow-x-auto rounded-lg border p-3 font-mono text-xs leading-5">
               {MCP_EXAMPLE}
             </pre>
@@ -412,7 +385,7 @@ export default function AdminPage() {
               </span>
             )}
             <Button onClick={handleSaveMcp} disabled={savingMcp || readonly}>
-              {savingMcp ? 'Saving...' : 'Save MCP defaults'}
+              {savingMcp ? tc('saving') : t('saveMcp')}
             </Button>
           </div>
         </section>
